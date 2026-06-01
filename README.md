@@ -45,20 +45,53 @@ Xcode 工程则写入：
 }
 ```
 
-## 重新构建 / 升级版本
+## 重新构建 / 升级版本（全自动，防版本漂移）
 
 ```bash
-./build.sh 602.0.0          # 生成 xcframework + zip，并打印 checksum
+./build.sh 603.0.1          # 编译 + 打包 + 自动同步清单/url/checksum
 ```
 
-脚本结束会打印 zip 路径与 checksum。随后：
+`build.sh` 升级到新版本时会**自动**完成以下事项，无需手工维护清单：
 
-1. 用该 checksum 与目标 tag 更新 `Package.swift` 的 `binaryTarget(url:checksum:)`；
-2. 提交并打 tag：`git commit -am "swift-syntax <版本> prebuilt" && git tag <版本>`；
-3. 推送：`git push && git push origin <版本>`；
-4. 创建同名 GitHub Release 并上传 `SwiftSyntaxPrebuilt.xcframework.zip` 作为资产。
+1. **自动推导 product 清单**：用 `swift package dump-package` 读取上游真实的
+   `library` product 名（含 `_SwiftCompilerPluginMessageHandling` 这类下划线产品），
+   写回 `Package.swift` 的 `AUTO-PRODUCTS:BEGIN/END` 标记区。上游增删 product
+   （如 603 新增 `SwiftWarningControl`）会被自动跟随。
+2. **自动发现要打包的模块接口**：扫描构建产物里实际生成的 `*.swiftinterface`，
+   逐个收集，**永不漏模块**（含内部/版本探针模块）。
+3. **自动写回 `url` 版本号 + zip `checksum`** 到 `Package.swift` 的 `binaryTarget`。
+4. **打印 product 变更 diff**（相比上一版新增/删除了哪些 product），便于人工复核。
 
-> 仅支持 macOS（`arm64` + `x86_64`）。如需其它平台/架构，调整 `build.sh` 的 `SS_ARCHS` 与切片逻辑。
+随后只需提交、打 tag、发 Release（脚本结尾会打印对应命令）：
+
+```bash
+git add -A && git commit -m "swift-syntax 603.0.1 prebuilt"
+git tag 603.0.1 && git push origin main 603.0.1
+gh release create 603.0.1 SwiftSyntaxPrebuilt.xcframework.zip \
+  --title "swift-syntax 603.0.1 (prebuilt)"
+```
+
+> **务必上传 `build.sh` 本次生成的那个 zip**——它的 checksum 已被写进 `Package.swift`。
+> 重新打包会因 zip 时间戳变化得到不同 checksum，导致与已发布资产不一致。
+
+### 只体检不打包
+
+不想动已发布产物、只想检查清单是否跟上游漂移时：
+
+```bash
+SS_SKIP_PACKAGE=1 ./build.sh 603.0.1   # 仅 dump 上游 products、打印 diff、同步清单，不编译
+```
+
+### 相关环境变量
+
+| 变量 | 说明 | 默认 |
+| --- | --- | --- |
+| `SS_WORKDIR` | clone/build 中间目录（可复用） | `./.work` |
+| `SS_ARCHS` | 目标架构 | `arm64 x86_64` |
+| `SS_RELEASE_REPO` | 发布二进制的 GitHub 仓库 | `Naituw/swift-syntax` |
+| `SS_SKIP_PACKAGE` | =1 时只体检、不编译/打包 | （关） |
+
+> 仅支持 macOS（`arm64` + `x86_64`）。如需其它平台/架构，调整 `SS_ARCHS` 与切片逻辑。
 
 ## 注意
 

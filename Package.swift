@@ -10,7 +10,9 @@ import PackageDescription
 //
 // 产物对应的 swift-syntax 版本由 git tag 标记（如 602.0.0）。
 
-// 与官方 swift-syntax 完全一致的 library product 名（target 名见注释）
+// 与官方 swift-syntax 完全一致的 library product 名。
+// 下面这段由 build.sh 用 `swift package dump-package` 从上游自动生成，请勿手改。
+// AUTO-PRODUCTS:BEGIN
 let productNames: [String] = [
     "SwiftBasicFormat",
     "SwiftCompilerPlugin",
@@ -24,15 +26,15 @@ let productNames: [String] = [
     "SwiftRefactor",
     "SwiftSyntax",
     "SwiftSyntaxBuilder",
-    "SwiftSyntaxMacros",
     "SwiftSyntaxMacroExpansion",
-    "SwiftSyntaxMacrosTestSupport",
+    "SwiftSyntaxMacros",
     "SwiftSyntaxMacrosGenericTestSupport",
+    "SwiftSyntaxMacrosTestSupport",
     "SwiftWarningControl",
-    // 官方对外暴露名带下划线，target 名不带：
     "_SwiftCompilerPluginMessageHandling",
     "_SwiftLibraryPluginProvider",
 ]
+// AUTO-PRODUCTS:END
 
 let package = Package(
     name: "swift-syntax",
