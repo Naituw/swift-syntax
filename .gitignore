@@ -1,0 +1,5 @@
+# 大产物不入库，仅作为 GitHub Release 资产分发
+SwiftSyntaxPrebuilt.xcframework/
+SwiftSyntaxPrebuilt.xcframework.zip
+.work/
+.build/
