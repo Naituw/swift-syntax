@@ -39,6 +39,7 @@ MODULES=(
   SwiftCompilerPlugin SwiftCompilerPluginMessageHandling SwiftLibraryPluginProvider
   SwiftIDEUtils SwiftIfConfig SwiftLexicalLookup SwiftRefactor
   SwiftSyntaxMacrosTestSupport SwiftSyntaxMacrosGenericTestSupport
+  SwiftWarningControl
 )
 
 echo "== swift-syntax $SS_VERSION → XCFramework ($SLICE_ID) =="

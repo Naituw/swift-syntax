@@ -28,6 +28,7 @@ let productNames: [String] = [
     "SwiftSyntaxMacroExpansion",
     "SwiftSyntaxMacrosTestSupport",
     "SwiftSyntaxMacrosGenericTestSupport",
+    "SwiftWarningControl",
     // 官方对外暴露名带下划线，target 名不带：
     "_SwiftCompilerPluginMessageHandling",
     "_SwiftLibraryPluginProvider",
@@ -48,8 +49,8 @@ let package = Package(
         // 不依赖 Git-LFS。url 中的版本号需与本 tag 一致；升级版本时由 build.sh 重新生成 checksum。
         .binaryTarget(
             name: "SwiftSyntaxPrebuilt",
-            url: "https://github.com/Naituw/swift-syntax/releases/download/602.0.0/SwiftSyntaxPrebuilt.xcframework.zip",
-            checksum: "4280d357a3999736eeee29309540b57643f4c4a9a5ca24509b540e0e691bb03e"
+            url: "https://github.com/Naituw/swift-syntax/releases/download/603.0.1/SwiftSyntaxPrebuilt.xcframework.zip",
+            checksum: "0f38cd7ab04d139bceb2b3b7b36a0c954f0e66295732658a144a825d35998e4f"
         ),
     ]
 )
